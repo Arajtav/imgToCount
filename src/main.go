@@ -5,8 +5,7 @@ import (
     "fmt"
     "flag"
     "image"
-    "image/color"
-    "image/png"
+    _ "image/png"
     _ "image/jpeg"
 )
 
@@ -36,20 +35,18 @@ func main() {
     }
     file.Close();
 
-    img := image.NewRGBA(image.Rect(0, 0, 256, 256));
+    file, err = os.Create("out");
+    if err != nil { panic(err); }
+
     for x := 0; x < 256; x++ {
         for y := 0; y < 256; y++ {
             r, g, b, _ := in.At(int(float64(x)/256.0*float64(in.Bounds().Dx())), int(float64(y)/256.0*float64(in.Bounds().Dy()))).RGBA();
             c := getValue(r, g, b);
-            img.Set(x, y, color.RGBA{c, c, c, 255});
+            for i := uint8(0); i < c; i++ {
+                file.Write([]byte{uint8(x), uint8(y)});
+            }
         }
     }
-
-    file, err = os.Create("out.png");
-    if err != nil {
-        panic(err);
-    }
-    png.Encode(file, img);
     file.Close();
 }
 
