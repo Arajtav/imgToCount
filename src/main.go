@@ -3,26 +3,27 @@ package main
 import (
     "os"
     "fmt"
-    "flag"
     "image"
     _ "image/png"
     _ "image/jpeg"
+    _ "image/gif"
 )
 
-func main() {
-    flag.Parse();
+// converts rgb value to brightness
+func getValue(r uint32, g uint32, b uint32) uint8 { return uint8(0.2126 * float32(r)/256 + 0.7152 * float32(g)/256 + 0.0722 * float32(b)/256); }
 
-    if len(flag.Args()) < 1 {
+func main() {
+    if len(os.Args) < 2 {
         fmt.Fprintln(os.Stderr, "You need to specify input file");
         os.Exit(1);
     }
 
-    if len(flag.Args()) > 1 {
+    if len(os.Args) > 2 {
         fmt.Fprintln(os.Stderr, "Too many arguments");
         os.Exit(1);
     }
 
-    file, err := os.Open(flag.Args()[0]);
+    file, err := os.Open(os.Args[1]);
     if err != nil {
         fmt.Fprintln(os.Stderr, "Failed to open file");
         panic(err);
@@ -36,7 +37,10 @@ func main() {
     file.Close();
 
     file, err = os.Create("out");
-    if err != nil { panic(err); }
+    if err != nil {
+        fmt.Fprintln(os.Stderr, "Failed to create output file");
+        panic(err);
+    }
 
     for x := 0; x < 256; x++ {
         for y := 0; y < 256; y++ {
@@ -48,8 +52,4 @@ func main() {
         }
     }
     file.Close();
-}
-
-func getValue(r uint32, g uint32, b uint32) uint8 {
-    return uint8(0.2126 * float32(r)/256 + 0.7152 * float32(g)/256 + 0.0722 * float32(b)/256);
 }
