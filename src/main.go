@@ -36,10 +36,10 @@ func main() {
     }
     file.Close();
 
-    img := image.NewRGBA(image.Rect(0, 0, in.Bounds().Dx(), in.Bounds().Dy()));
-    for x := 0; x < in.Bounds().Dx(); x++ {
-        for y := 0; y < in.Bounds().Dy(); y++ {
-            r, g, b, _ := in.At(x, y).RGBA();
+    img := image.NewRGBA(image.Rect(0, 0, 256, 256));
+    for x := 0; x < 256; x++ {
+        for y := 0; y < 256; y++ {
+            r, g, b, _ := in.At(int(float64(x)/256.0*float64(in.Bounds().Dx())), int(float64(y)/256.0*float64(in.Bounds().Dy()))).RGBA();
             c := getValue(r, g, b);
             img.Set(x, y, color.RGBA{c, c, c, 255});
         }
